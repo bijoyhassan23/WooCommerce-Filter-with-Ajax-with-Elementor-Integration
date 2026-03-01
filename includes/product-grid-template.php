@@ -79,11 +79,9 @@ function wc_filter_ajax_template($template_id){
             ];
         }
     }
-    var_dump($args);
 
     $products = new WP_Query( $args );
     if ( $products->have_posts() ) {
-        echo $products->found_posts;
         while ( $products->have_posts() ) {
             $products->the_post();
             echo do_shortcode('[elementor-template id="' . esc_attr($template_id) . '"]');
@@ -93,15 +91,17 @@ function wc_filter_ajax_template($template_id){
             <div class="current_item_status">
                 Showing <?php echo ($args['paged'] - 1) * $args['posts_per_page'] + 1; ?>-<?php echo min($args['paged'] * $args['posts_per_page'], $products->found_posts); ?> of <?php echo $products->found_posts; ?> item(s)
             </div>
-            <?php 
-            echo paginate_links([
-                'total' => $products->max_num_pages,
-                'current' => $args['paged'],
-                'format' => '?paged=%#%',
-                'prev_text' => __('« Prev'),
-                'next_text' => __('Next »'),
-            ]); 
-            ?>
+            <div class="main_pagination">
+                <?php 
+                echo paginate_links([
+                    'total' => $products->max_num_pages,
+                    'current' => $args['paged'],
+                    'format' => '?paged=%#%',
+                    'prev_text' => __('Previous'),
+                    'next_text' => __('Next'),
+                ]); 
+                ?>
+            </div>
         </div>
         <?php
         wp_reset_postdata();
