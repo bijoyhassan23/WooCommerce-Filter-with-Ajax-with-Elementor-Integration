@@ -1,0 +1,125 @@
+.filter_con {
+  width: 100%;
+  border: 1px solid #eee;
+  padding: 15px;
+  border-radius: 8px;
+  background: #fff;
+  font-family: sans-serif;
+}
+.each_filter {
+  margin-bottom: 0px;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 5px;
+}
+.filter_header label {
+  font-size: 16px !important;
+  line-height: 24px;
+  font-weight: 700 !important;
+  font-family: Open Sans;
+}
+.filter_header {
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  user-select: none;
+  padding: 4px 0;
+}
+.toggle-icon {
+  font-size: 26px;
+  transition: transform 0.2s ease;
+}
+.clapse_able_part {
+  max-height: 0;
+  overflow: auto;
+  transition:
+    max-height 0.35s ease,
+    padding 0.2s ease;
+  padding-top: 0px;
+}
+.clapse_able_part.open {
+  max-height: 300px;
+  padding-top: 0px;
+}
+label {
+  font-size: 14px;
+  display: block;
+  margin: 3px 0;
+}
+.reset-filters {
+  background: rgb(255, 134, 25);
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-top: 10px;
+  width: 100%;
+}
+.reset-filters:hover {
+  background: rgb(255, 134, 25);
+}
+.clapse_able_part label {
+  font-size: 16px;
+  font-weight: 400;
+  color: rgb(51, 51, 51);
+  font-family: Open Sans;
+  padding-bottom: 13px;
+  margin: 0px;
+  cursor: pointer;
+}
+
+.clapse_able_part .apply-price {
+  margin-top: 10px;
+  margin-bottom: 10px;
+  border: 1px solid #eee;
+  background-color: #fff;
+  color: #333;
+  transition-duration: 0.3s;
+  width: 100%;
+}
+
+.clapse_able_part .apply-price:hover {
+  background-color: #ff8619;
+  border: 1px solid #ff8619;
+  color: #ffffff;
+}
+.clapse_able_part #min_price {
+  border: 1px solid #eee;
+}
+
+.clapse_able_part #min_price {
+  width: 47% !important;
+}
+.clapse_able_part #max_price {
+  width: 47% !important;
+}
+
+.category_filter,
+.brand_filter,
+.series_filter,
+.type_filter {
+  .clapse_able_part label {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .clapse_able_part label span:last-child {
+    opacity: 0.5;
+    padding: 1px;
+    font-size: 13px;
+    margin-right: 10px;
+  }
+}
+
+@media (max-width: 1024px) {
+  .filter_header label {
+    font-size: 14px !important;
+    line-height: 21px;
+  }
+  .clapse_able_part.open {
+    max-height: 250px;
+    padding-top: 0px;
+  }
+}

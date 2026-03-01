@@ -28,8 +28,11 @@ class Wc_filter_ajax_with_elementor{
         $this->includes_files();
         
         add_action("wp_enqueue_scripts", [$this, "enqueue_scripts"]);
+        add_action("wp_ajax_wc_filter_products", [$this, "wc_filter_products_callback"]);
+        add_action("wp_ajax_nopriv_wc_filter_products", [$this, "wc_filter_products_callback"]);
         
-        add_shortcode("wc_filter_ajax", [$this, "render_shortcode"]);
+        add_shortcode("wc_filter_ajax", [$this, "filter_render_shortcode"]);
+        add_shortcode("wc_filter_ajax_template", [$this, "template_render_shortcode"]);
         
         register_activation_hook(__FILE__, [$this, "activate"]);
         register_deactivation_hook(__FILE__, [$this, "deactivate"]);
@@ -42,11 +45,55 @@ class Wc_filter_ajax_with_elementor{
     }
 
     private function includes_files(){
-        
+        include WC_FILTER_AJAX_PLUGIN_DIR . "includes/product-grid-template.php";
     }
 
     public function enqueue_scripts(){
-        // Enqueue necessary scripts and styles here
+        // Register necessary scripts and styles here
+        wp_register_style("wc-filter-ajax-style", WC_FILTER_AJAX_PLUGIN_URL . "assets/css/main.css", [], WC_FILTER_AJAX_VERSION);
+        wp_register_script("wc-filter-ajax-script", WC_FILTER_AJAX_PLUGIN_URL . "assets/js/main.js", [], WC_FILTER_AJAX_VERSION, true);
+        wp_localize_script("wc-filter-ajax-script", "wcFilterAjax", [
+            "ajax_url" => admin_url("admin-ajax.php"),
+            "nonce" => wp_create_nonce("wc_filter_ajax_nonce"),
+        ]);    
+    }
+
+    public function filter_render_shortcode($atts){
+        // Render the shortcode output here
+        wp_enqueue_style("wc-filter-ajax-style");
+        wp_enqueue_script("wc-filter-ajax-script");
+        ob_start();
+        include WC_FILTER_AJAX_PLUGIN_DIR . "includes/shortcode-filter.php";
+        return ob_get_clean();
+    }
+
+    public function template_render_shortcode($atts){
+        // Render the template shortcode output here
+        wp_enqueue_style("wc-filter-ajax-style");
+        wp_enqueue_script("wc-filter-ajax-script");
+        $atts = wp_parse_args($atts, ["template_id" => null]);
+        $template_id = $atts['template_id'];
+        if(!$template_id) return;
+        ob_start();
+            echo '<div class="wc-filter-loop-grid" data-template-id="' . esc_attr($template_id) .'">';
+                wc_filter_ajax_template($template_id);
+            echo '</div>';
+        return ob_get_clean();
+    }
+
+    public function wc_filter_products_callback(){
+        if(!wp_verify_nonce($_GET['nonce'], "wc_filter_ajax_nonce")){
+            wp_send_json_error("Invalid nonce");
+            wp_die();
+        };
+
+        $template_id = isset($_GET['template_id']) ? intval($_GET['template_id']) : 0;
+        if(!$template_id){
+            wp_send_json_error("Invalid template ID");
+            wp_die();
+        }
+
+        wc_filter_ajax_template($template_id);
     }
 
     public function activate(){
