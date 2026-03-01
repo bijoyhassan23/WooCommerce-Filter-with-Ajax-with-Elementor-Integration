@@ -5,6 +5,7 @@
   border-radius: 8px;
   background: #fff;
   font-family: sans-serif;
+  max-width: 100%;
 }
 .each_filter {
   margin-bottom: 0px;
@@ -105,7 +106,7 @@ label {
     align-items: center;
   }
 
-  .clapse_able_part label span:last-child {
+.clapse_able_part label span:last-child {
     opacity: 0.5;
     padding: 1px;
     font-size: 13px;
@@ -113,7 +114,16 @@ label {
   }
 }
 
+.wc-filter-loop{
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
 @media (max-width: 1024px) {
+  .wc-filter-loop{
+    grid-template-columns: repeat(2, 1fr);
+  }
   .filter_header label {
     font-size: 14px !important;
     line-height: 21px;
@@ -121,5 +131,11 @@ label {
   .clapse_able_part.open {
     max-height: 250px;
     padding-top: 0px;
+  }
+}
+
+@media (max-width: 767px){
+  .wc-filter-loop{
+    grid-template-columns: repeat(1, 1fr);
   }
 }

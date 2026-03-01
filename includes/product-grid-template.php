@@ -82,11 +82,13 @@ function wc_filter_ajax_template($template_id){
 
     $products = new WP_Query( $args );
     if ( $products->have_posts() ) {
+        ?><div class="wc-filter-loop" data-template-id="<?php echo esc_attr($template_id); ?>"><?php
         while ( $products->have_posts() ) {
             $products->the_post();
             echo do_shortcode('[elementor-template id="' . esc_attr($template_id) . '"]');
         }
         ?>
+        </div>
         <div class="wc-filter-pagination">
             <div class="current_item_status">
                 Showing <?php echo ($args['paged'] - 1) * $args['posts_per_page'] + 1; ?>-<?php echo min($args['paged'] * $args['posts_per_page'], $products->found_posts); ?> of <?php echo $products->found_posts; ?> item(s)
