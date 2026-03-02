@@ -17,29 +17,27 @@ document.querySelectorAll(".filter_con").forEach(filter => {
     let debounceTimer;
 
     function applyFilters(e){
-        console.log("Filter changed:", e.target.name, e.target.value);
-        if(e.target.name === "min_price" || e.target.name === "max_price"){
+        if((e?.target?.name && e.target.name === "min_price") || (e?.target?.name && e.target.name === "max_price")){
             const minPrice = filter.querySelector('input[name="min_price"]').value;
             const maxPrice = filter.querySelector('input[name="max_price"]').value;
-            if(minPrice && maxPrice && parseFloat(minPrice) > parseFloat(maxPrice)) return;
+            if(minPrice && maxPrice && parseFloat(minPrice) > parseFloat(maxPrice)) return;``
         }
 
         clearTimeout(debounceTimer);
         debounceTimer = setTimeout(() => {
             const filterData = getFilterData();
-            templateId = document.querySelector('.wc-filter-loop-grid')?.dataset?.templateId;
+            const productGrid = document.querySelector('.wc-filter-loop-grid');
+            const templateId = productGrid?.dataset?.templateId;
+            const filterHook = productGrid?.dataset?.filterHook;
             if(templateId){
-                fetch(`${wcFilterAjax.ajax_url}?action=wc_filter_products&template_id=${templateId}&${filterData}&nonce=${wcFilterAjax.nonce}`, {
-                    method: "GET",
-                })
+                fetch(`${wcFilterAjax.ajax_url}?action=wc_filter_products&template_id=${templateId}&filter_hook=${filterHook}&${filterData}&nonce=${wcFilterAjax.nonce}`, {method: "GET"})
                 .then(response => response.text())
                 .then(data => {
-                    console.log(data);
-                    const productGrid = document.querySelector('.wc-filter-loop-grid');
+                    if(data.trim().endsWith("0")) data = data.substring(0, data.length - 1);
                     if(productGrid){
                         productGrid.innerHTML = data;
                         let newUrl = window.location.pathname.replace(/\/page\/\d+\/?$/, '/');
-                        history.replaceState('http://anixways.local/test/', '', `${newUrl}?${filterData}`);
+                        history.replaceState({}, '', `${newUrl}?${filterData}`);
                         productGrid.querySelectorAll(".wc-filter-pagination a").forEach(link => {
                             let giveURL = link.getAttribute("href");
                             link.href = giveURL.replace('/wp-admin/admin-ajax.php/', location.pathname);
@@ -50,7 +48,6 @@ document.querySelectorAll(".filter_con").forEach(filter => {
                     console.error("Error applying filters:", error);
                 });
             }
-            console.log(filterData);
         }, 100); // Debounce for 500ms
     }
 
@@ -62,4 +59,20 @@ document.querySelectorAll(".filter_con").forEach(filter => {
         e.preventDefault();
         applyFilters(e);
     });
+    window.filter = filter; // Expose filter to the global scope for debugging
+    const resetButton = filter.querySelector(".reset-filters");
+    if(resetButton){
+        resetButton.addEventListener("click", function(e){
+            e.preventDefault();
+            filter.querySelectorAll("input, select, textarea").forEach(input => {
+                if(input.type === "checkbox" || input.type === "radio"){
+                    input.checked = false;
+                } else {
+                    input.value = "";
+                }
+            });
+            filter.querySelector('[name="per_page"]').checked = true;
+            applyFilters(new Event("change"));
+        });
+    }
 });

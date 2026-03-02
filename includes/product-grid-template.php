@@ -1,6 +1,6 @@
 <?php
 defined("ABSPATH") or die("Direct access not allowed.");
-function wc_filter_ajax_template($template_id){
+function wc_filter_ajax_template($template_id, $filter_hook = null){
     if(!$template_id) return;
     
     $args = [
@@ -10,6 +10,7 @@ function wc_filter_ajax_template($template_id){
         'paged' => get_query_var('paged') ? get_query_var('paged') : 1,
     ];
 
+    if(isset($_GET['s']) && !empty($_GET['s'])) $args['s'] = sanitize_text_field($_GET['s']);
     if(isset($_GET['paged'])) $args['paged'] = intval($_GET['paged']);
 
     // order by
@@ -79,6 +80,8 @@ function wc_filter_ajax_template($template_id){
             ];
         }
     }
+    
+    if($filter_hook) $args = apply_filters($filter_hook . '_pre_query', $args);
 
     $products = new WP_Query( $args );
     if ( $products->have_posts() ) {

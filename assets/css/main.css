@@ -6,6 +6,9 @@
   background: #fff;
   font-family: sans-serif;
   max-width: 100%;
+  *{
+    box-sizing: border-box;
+  }
 }
 .each_filter {
   margin-bottom: 0px;
@@ -56,6 +59,8 @@ label {
   cursor: pointer;
   margin-top: 10px;
   width: 100%;
+  text-align: center;
+  font-size: 16px;
 }
 .reset-filters:hover {
   background: rgb(255, 134, 25);
@@ -120,6 +125,19 @@ label {
   gap: 20px;
 }
 
+.search_filter{
+  &[show_status="false"]{
+    display: none;
+  }
+  input{
+      border: 1px solid #666;
+      border-radius: 3px;
+      padding: .5rem 1rem;
+      transition: all .3s;
+      width: 100%;
+  }
+}
+
 @media (max-width: 1024px) {
   .wc-filter-loop{
     grid-template-columns: repeat(2, 1fr);
@@ -137,5 +155,39 @@ label {
 @media (max-width: 767px){
   .wc-filter-loop{
     grid-template-columns: repeat(1, 1fr);
+  }
+}
+
+/* Pagination */
+.wc-filter-loop-grid{
+  .wc-filter-pagination{
+    margin-top: 20px;
+    background-color: #E6E8EA;
+    padding: 20px 30px;
+    display: flex !important;
+    align-items: center;
+    justify-content: space-between !important;
+    border-radius: 8px;
+    .current_item_status{
+      font-size: 14px;
+      font-weight: 400;
+    }
+    .main_pagination{
+      background-color: #FFFFFF !important;
+      padding: 8px;
+      border-radius: 8px;
+      color: #0D132E;
+      text-align: center;
+      font-family: "Open Sans", Sans-serif;
+      font-size: 14px;
+      font-weight: 700;
+      line-height: 19px;
+      display: flex;
+      gap: 8px;
+      a{
+        font-weight: 400;
+        text-decoration: none;
+      }
+    }
   }
 }

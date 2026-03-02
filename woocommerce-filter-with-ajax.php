@@ -71,12 +71,12 @@ class Wc_filter_ajax_with_elementor{
         // Render the template shortcode output here
         wp_enqueue_style("wc-filter-ajax-style");
         wp_enqueue_script("wc-filter-ajax-script");
-        $atts = wp_parse_args($atts, ["template_id" => null]);
+        $atts = wp_parse_args($atts, ["template_id" => null, "filter_hook" => null]);
         $template_id = $atts['template_id'];
         if(!$template_id) return;
         ob_start();
-            echo '<div class="wc-filter-loop-grid" data-template-id="' . esc_attr($template_id) .'">';
-                wc_filter_ajax_template($template_id);
+            echo '<div class="wc-filter-loop-grid" data-template-id="' . esc_attr($template_id) .'" data-filter-hook="' . esc_attr($atts['filter_hook']) .'">';
+                wc_filter_ajax_template($template_id, $atts['filter_hook']);
             echo '</div>';
         return ob_get_clean();
     }
@@ -92,8 +92,8 @@ class Wc_filter_ajax_with_elementor{
             wp_send_json_error("Invalid template ID");
             wp_die();
         }
-
-        wc_filter_ajax_template($template_id);
+        $filter_hook = isset($_GET['filter_hook']) ? sanitize_text_field($_GET['filter_hook']) : null;
+        wc_filter_ajax_template($template_id, $filter_hook);
     }
 
     public function activate(){

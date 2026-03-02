@@ -9,7 +9,18 @@ global $wpdb;
 $atts['terms'] = $atts['terms'] ? explode(",", $atts['terms']) : [];
 $atts['per_page'] = $atts['per_page'] ? array_map('intval', explode(",", $atts['per_page'])) : [];
 ?>
-    <form class="filter_con">
+    <form class="filter_con" action="#">
+        <!-- Search Query -->
+        <div class="each_filter search_filter" show_status="<?php echo in_array("search", $atts) ? 'true' : 'false'; ?>">
+            <div class="filter_header">
+                <label>Search</label>
+                <span class="toggle-icon">+</span>
+            </div>
+            <div class="clapse_able_part">
+                <input type="text" name="s" value="<?php echo isset($_GET['s']) ? esc_attr($_GET['s']) : ''; ?>" placeholder="Search products...">
+            </div>
+        </div>
+
         <!-- ORDERBY -->
         <?php if(in_array("orderby", $atts)){?>
             <div class="each_filter orderby_filter">
@@ -45,7 +56,7 @@ $atts['per_page'] = $atts['per_page'] ? array_map('intval', explode(",", $atts['
                 </div>
                 <div class="clapse_able_part">
                     <?php 
-                    $per_page = isset($_GET['per_page']) ? intval($_GET['per_page']) : 12;
+                    $per_page = isset($_GET['per_page']) ? intval($_GET['per_page']) : 18;
                     foreach ($atts['per_page'] as $num) { ?>
                         <label>
                             <input type="radio" class="filter-radio" name="per_page" value="<?php echo esc_attr($num); ?>" <?php checked($per_page, $num); ?>> 
@@ -72,10 +83,10 @@ $atts['per_page'] = $atts['per_page'] ? array_map('intval', explode(",", $atts['
                         AND meta_value != ''
                     ");
                     if ($stock_statuses) {
-                        $current_stock_status = isset($_GET['stock_status']) ? $_GET['stock_status'] : '';
+                        $current_stock_status = isset($_GET['stock_status']) ? $_GET['stock_status'] : [];
                         foreach ($stock_statuses as $status) { ?>
                             <label>
-                                <input type="checkbox" class="filter-input" name="stock_status[]" value="<?php echo esc_attr($status); ?>" <?php checked($current_stock_status, $status); ?>> 
+                                <input type="checkbox" class="filter-input" name="stock_status[]" value="<?php echo esc_attr($status); ?>" <?php checked(in_array($status, $current_stock_status)); ?>> 
                                 <?php echo esc_html(ucwords(str_replace(['_', '-'], ' ', $status))); ?>
                             </label>
                             <?php }
@@ -139,6 +150,6 @@ $atts['per_page'] = $atts['per_page'] ? array_map('intval', explode(",", $atts['
         } ?>
 
         <!-- RESET BUTTON -->
-        <button class="reset-filters">Reset Filters</button>
+        <div class="reset-filters">Reset Filters</div>
     </form>
 
