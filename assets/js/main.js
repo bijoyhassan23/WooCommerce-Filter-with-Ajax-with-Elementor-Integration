@@ -9,6 +9,7 @@ document.querySelectorAll(".filter_con").forEach(filter => {
 
     function getFilterData(){
         const formData = new FormData(filter);
+        if(!formData.get("s").trim()) formData.delete("s");
         const params = new URLSearchParams(formData);
         const searchString = params.toString();
         return searchString;
