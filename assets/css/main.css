@@ -36,9 +36,8 @@
 .clapse_able_part {
   max-height: 0;
   overflow: auto;
-  transition:
-    max-height 0.35s ease,
-    padding 0.2s ease;
+  transition: max-height 0.35s ease,
+  padding 0.2s ease;
   padding-top: 0px;
 }
 .clapse_able_part.open {
@@ -50,7 +49,7 @@ label {
   display: block;
   margin: 3px 0;
 }
-.reset-filters {
+.button {
   background: rgb(255, 134, 25);
   color: #fff;
   border: none;
@@ -61,10 +60,18 @@ label {
   width: 100%;
   text-align: center;
   font-size: 16px;
+  border: solid rgb(255, 134, 25) 1px;
+  transition: 0.3s;
+  &.reset-filters{
+    background: transparent;
+    color: rgb(255, 134, 25);
+  }
 }
-.reset-filters:hover {
+.button:hover {
   background: rgb(255, 134, 25);
+  color: #fff;
 }
+
 .clapse_able_part label {
   font-size: 16px;
   font-weight: 400;
@@ -101,10 +108,7 @@ label {
   width: 47% !important;
 }
 
-.category_filter,
-.brand_filter,
-.series_filter,
-.type_filter {
+.filter_con .each_filter:has(.clapse_able_part label span:nth-child(2)) {
   .clapse_able_part label {
     display: flex;
     justify-content: space-between;
@@ -138,6 +142,16 @@ label {
   }
 }
 
+.wc-filter-loop {
+    > *,
+    > * > *{
+        height: 100% !important;
+        min-height: 100% !important;
+    }
+}
+
+
+
 @media (max-width: 1024px) {
   .wc-filter-loop{
     grid-template-columns: repeat(2, 1fr);
@@ -158,9 +172,14 @@ label {
   }
 }
 
-/* Pagination */
 .wc-filter-loop-grid{
+  /* Pagination */
+  position: relative;
+
   .wc-filter-pagination{
+    *{
+      font-family: "Open Sans", Sans-serif;
+    }
     margin-top: 20px;
     background-color: #E6E8EA;
     padding: 20px 30px;
@@ -187,7 +206,31 @@ label {
       a{
         font-weight: 400;
         text-decoration: none;
+        color: rgb(13, 19, 46);
       }
     }
+  }
+
+  /* Loading Animation */
+  &::before{
+    content: "";
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    top: 0;
+    left: 0;
+    background-color: white;
+    z-index: 2;
+    background-image: url(https://cdn.prod.website-files.com/65af5b66d9cf4364ab3d980d/65af5b66d9cf4364ab3d9a75_Loading_icon.gif);
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-size: min(350px, 100%);
+    opacity: 0;
+    transition: 0.3s;
+    pointer-events: none;
+  }
+  &[load-status="true"]::before{
+    opacity: 0.8;
+    pointer-events: all;
   }
 }

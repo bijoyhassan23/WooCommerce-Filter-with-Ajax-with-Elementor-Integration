@@ -2,7 +2,7 @@
 /**
  * Plugin Name: WooCommerce Filter with Ajax with Elementor Integration
  * Description: A plugin to filter WooCommerce products using Ajax. Allows customers to filter products by category, price, attributes, and more with real-time Ajax updates and seamless Elementor widget integration.
- * Version: 1.0.0
+ * Version: 1.0.8
  * Author: Forazitech
  * Author URI: https://forazitech.com
  * License: GPL2
@@ -28,6 +28,7 @@ class Wc_filter_ajax_with_elementor{
         $this->includes_files();
         
         add_action("wp_enqueue_scripts", [$this, "enqueue_scripts"]);
+        add_action("admin_enqueue_scripts", [$this, "enqueue_scripts"]);
         add_action("wp_ajax_wc_filter_products", [$this, "wc_filter_products_callback"]);
         add_action("wp_ajax_nopriv_wc_filter_products", [$this, "wc_filter_products_callback"]);
         
@@ -39,7 +40,7 @@ class Wc_filter_ajax_with_elementor{
     }
 
     private function define_constants(){
-        define("WC_FILTER_AJAX_VERSION", "1.0.0");
+        define("WC_FILTER_AJAX_VERSION", "1.0.8");
         define("WC_FILTER_AJAX_PLUGIN_DIR", plugin_dir_path(__FILE__));
         define("WC_FILTER_AJAX_PLUGIN_URL", plugin_dir_url(__FILE__));
     }
@@ -75,7 +76,7 @@ class Wc_filter_ajax_with_elementor{
         $template_id = $atts['template_id'];
         if(!$template_id) return;
         ob_start();
-            echo '<div class="wc-filter-loop-grid" data-template-id="' . esc_attr($template_id) .'" data-filter-hook="' . esc_attr($atts['filter_hook']) .'">';
+            echo '<div class="wc-filter-loop-grid" data-template-id="' . esc_attr($template_id) .'" data-filter-hook="' . esc_attr($atts['filter_hook']) .'" . load-status="false" .>';
                 wc_filter_ajax_template($template_id, $atts['filter_hook']);
             echo '</div>';
         return ob_get_clean();

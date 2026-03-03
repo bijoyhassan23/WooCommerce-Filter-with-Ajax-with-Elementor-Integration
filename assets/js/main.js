@@ -18,6 +18,11 @@ document.querySelectorAll(".filter_con").forEach(filter => {
     let debounceTimer;
 
     function applyFilters(e){
+        const productGrid = document.querySelector('.wc-filter-loop-grid');
+        if(!productGrid) return;
+
+        productGrid.setAttribute("load-status", "true");
+
         if((e?.target?.name && e.target.name === "min_price") || (e?.target?.name && e.target.name === "max_price")){
             const minPrice = filter.querySelector('input[name="min_price"]').value;
             const maxPrice = filter.querySelector('input[name="max_price"]').value;
@@ -27,7 +32,6 @@ document.querySelectorAll(".filter_con").forEach(filter => {
         clearTimeout(debounceTimer);
         debounceTimer = setTimeout(() => {
             const filterData = getFilterData();
-            const productGrid = document.querySelector('.wc-filter-loop-grid');
             const templateId = productGrid?.dataset?.templateId;
             const filterHook = productGrid?.dataset?.filterHook;
             if(templateId){
@@ -35,27 +39,28 @@ document.querySelectorAll(".filter_con").forEach(filter => {
                 .then(response => response.text())
                 .then(data => {
                     if(data.trim().endsWith("0")) data = data.substring(0, data.length - 1);
-                    if(productGrid){
-                        productGrid.innerHTML = data;
-                        let newUrl = window.location.pathname.replace(/\/page\/\d+\/?$/, '/');
-                        history.replaceState({}, '', `${newUrl}?${filterData}`);
-                        productGrid.querySelectorAll(".wc-filter-pagination a").forEach(link => {
-                            let giveURL = link.getAttribute("href");
-                            link.href = giveURL.replace('/wp-admin/admin-ajax.php/', location.pathname);
-                        });
-                    }
+                    productGrid.innerHTML = data;
+                    let newUrl = window.location.pathname.replace(/\/page\/\d+\/?$/, '/');
+                    history.replaceState({}, '', `${newUrl}?${filterData}`);
+                    productGrid.querySelectorAll(".wc-filter-pagination a").forEach(link => {
+                        let giveURL = link.getAttribute("href");
+                        link.href = giveURL.replace('/wp-admin/admin-ajax.php/', location.pathname);
+                    });
+                    productGrid.setAttribute("load-status", "false");
                 })
                 .catch(error => {
                     console.error("Error applying filters:", error);
+                    productGrid.setAttribute("load-status", "false");
                 });
             }
         }, 100); // Debounce for 500ms
     }
 
-    filter.querySelectorAll("input, select, textarea").forEach(input => {
-        input.addEventListener("change", applyFilters);
-        input.addEventListener("input", applyFilters);
-    }); 
+    // Attach event listeners to all filter inputs
+    // filter.querySelectorAll("input, select, textarea").forEach(input => {
+    //     input.addEventListener("change", applyFilters);
+    //     input.addEventListener("input", applyFilters);
+    // }); 
     filter.addEventListener("submit", function(e){
         e.preventDefault();
         applyFilters(e);

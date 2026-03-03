@@ -123,7 +123,7 @@ $atts['per_page'] = $atts['per_page'] ? array_map('intval', explode(",", $atts['
             $term_filters = isset($_GET['terms']) ? $_GET['terms'] : []; 
             foreach($atts['terms'] as $term_slug){
                 $term_obj = get_taxonomy( $term_slug );
-                $term = get_terms(['taxonomy' => $term_slug, 'hide_empty' => false]);
+                $term = get_terms(['taxonomy' => $term_slug, 'hide_empty' => true]);
                 if (is_wp_error($term) || empty($term)) continue;
                 $title = $term_obj->labels->singular_name ? $term_obj->labels->singular_name : ucwords(str_replace(['-', '_'], ' ', $term_slug));
                 ?>
@@ -150,6 +150,7 @@ $atts['per_page'] = $atts['per_page'] ? array_map('intval', explode(",", $atts['
         } ?>
 
         <!-- RESET BUTTON -->
-        <div class="reset-filters">Reset Filters</div>
+        <div class="button reset-filters">Reset Filters</div>
+        <button type="submit" class="button apply-filters">Apply Filters</button>
     </form>
 
