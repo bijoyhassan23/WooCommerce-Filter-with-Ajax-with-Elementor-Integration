@@ -150,7 +150,7 @@ $atts['per_page'] = $atts['per_page'] ? array_map('intval', explode(",", $atts['
         } ?>
 
         <!-- RESET BUTTON -->
-        <div class="button reset-filters">Reset Filters</div>
-        <button type="submit" class="button apply-filters">Apply Filters</button>
+        <div class="ajax-wc-button reset-filters">Reset Filters</div>
+        <button type="submit" class="ajax-wc-button apply-filters">Apply Filters</button>
     </form>
 

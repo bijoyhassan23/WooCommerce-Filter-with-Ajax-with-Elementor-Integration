@@ -2,7 +2,7 @@
 /**
  * Plugin Name: WooCommerce Filter with Ajax with Elementor Integration
  * Description: A plugin to filter WooCommerce products using Ajax. Allows customers to filter products by category, price, attributes, and more with real-time Ajax updates and seamless Elementor widget integration.
- * Version: 1.0.8
+ * Version: 2.0.0
  * Author: Forazitech
  * Author URI: https://forazitech.com
  * License: GPL2
@@ -40,7 +40,7 @@ class Wc_filter_ajax_with_elementor{
     }
 
     private function define_constants(){
-        define("WC_FILTER_AJAX_VERSION", "1.0.8");
+        define("WC_FILTER_AJAX_VERSION", "2.0.0");
         define("WC_FILTER_AJAX_PLUGIN_DIR", plugin_dir_path(__FILE__));
         define("WC_FILTER_AJAX_PLUGIN_URL", plugin_dir_url(__FILE__));
     }
@@ -53,10 +53,26 @@ class Wc_filter_ajax_with_elementor{
         // Register necessary scripts and styles here
         wp_register_style("wc-filter-ajax-style", WC_FILTER_AJAX_PLUGIN_URL . "assets/css/main.css", [], WC_FILTER_AJAX_VERSION);
         wp_register_script("wc-filter-ajax-script", WC_FILTER_AJAX_PLUGIN_URL . "assets/js/main.js", [], WC_FILTER_AJAX_VERSION, true);
-        wp_localize_script("wc-filter-ajax-script", "wcFilterAjax", [
+        
+        // Localize script to pass Ajax URL and nonce
+        $wc_filter_ajax_params = [
             "ajax_url" => admin_url("admin-ajax.php"),
             "nonce" => wp_create_nonce("wc_filter_ajax_nonce"),
-        ]);    
+        ];
+
+        global $wp_query;
+        if (is_archive()) {
+            $query_vars = $wp_query->query_vars;
+            if (isset($query_vars['taxonomy']) && isset($query_vars['term'])) {
+                $wc_filter_ajax_params['tax_query'] = [
+                    'taxonomy' => $query_vars['taxonomy'],
+                    'field'    => 'slug',
+                    'terms'    => $query_vars['term'],
+                    'operator' => 'IN',
+                ];
+            }
+        }
+        wp_localize_script("wc-filter-ajax-script", "wcFilterAjax", $wc_filter_ajax_params);
     }
 
     public function filter_render_shortcode($atts){

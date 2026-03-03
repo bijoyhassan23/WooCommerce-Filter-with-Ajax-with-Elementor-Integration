@@ -35,7 +35,13 @@ document.querySelectorAll(".filter_con").forEach(filter => {
             const templateId = productGrid?.dataset?.templateId;
             const filterHook = productGrid?.dataset?.filterHook;
             if(templateId){
-                fetch(`${wcFilterAjax.ajax_url}?action=wc_filter_products&template_id=${templateId}&filter_hook=${filterHook}&${filterData}&nonce=${wcFilterAjax.nonce}`, {method: "GET"})
+                let ajaxUrl = `${wcFilterAjax.ajax_url}?action=wc_filter_products&template_id=${templateId}&filter_hook=${filterHook}&${filterData}&nonce=${wcFilterAjax.nonce}`;
+                if(wcFilterAjax?.tax_query){
+                    Object.entries(wcFilterAjax.tax_query).forEach(([key, value]) => {
+                        ajaxUrl += `&tax_query[${key}]=${value}`;
+                    });
+                }
+                fetch(ajaxUrl, {method: "GET"})
                 .then(response => response.text())
                 .then(data => {
                     if(data.trim().endsWith("0")) data = data.substring(0, data.length - 1);
